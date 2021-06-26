@@ -1,0 +1,37 @@
+version: '3.5'
+services:
+  syncthing:
+    image: syncthing/syncthing
+    # コンテナ名を明示的に指定する
+    container_name: syncthing
+    # docker:dockerユーザを指定する
+    environment:
+      - PUID=8001
+      - PGID=8001
+    # ホスト名を明示的に指定する
+    hostname: syncthing-server
+    ports:
+      - "8384:8384/tcp"
+      - "21027:21027/udp"
+      - "22000:22000/tcp"
+    restart: always
+    # 明示的に所属するネットワークを指定する
+    networks:
+      # networksの識別子
+      - syncthing-link
+    # volumesの指定
+    volumes:
+    - ./volumes/config:/var/syncthing/config
+    - ./volumes/data:/var/syncthing
+    # ログのサイズを指定
+    logging:
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+# ネットワーク定義
+networks:
+  # ネットワークセグメント
+  syncthing-link:
+    # ネットワーク名
+    external: false
